@@ -1,28 +1,41 @@
 import classNames from 'classnames';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 const getNavLinkClassName = ({ isActive }: { isActive: boolean }) =>
   classNames('navbar-item', {
     'has-background-grey-lighter': isActive,
   });
 
-export const Navbar = () => (
-  <nav
-    data-cy="nav"
-    className="navbar is-fixed-top has-shadow"
-    role="navigation"
-    aria-label="main navigation"
-  >
-    <div className="container">
-      <div className="navbar-brand">
-        <NavLink to="/" end className={getNavLinkClassName}>
-          Home
-        </NavLink>
+export const Navbar = () => {
+  const location = useLocation();
+  const peopleSearch = location.pathname.startsWith('/people')
+    ? location.search
+    : '';
 
-        <NavLink to="/people" className={getNavLinkClassName}>
-          People
-        </NavLink>
+  return (
+    <nav
+      data-cy="nav"
+      className="navbar is-fixed-top has-shadow"
+      role="navigation"
+      aria-label="main navigation"
+    >
+      <div className="container">
+        <div className="navbar-brand">
+          <NavLink to="/" end className={getNavLinkClassName}>
+            Home
+          </NavLink>
+
+          <NavLink
+            to={{
+              pathname: '/people',
+              search: peopleSearch,
+            }}
+            className={getNavLinkClassName}
+          >
+            People
+          </NavLink>
+        </div>
       </div>
-    </div>
-  </nav>
-);
+    </nav>
+  );
+};

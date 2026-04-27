@@ -4,9 +4,14 @@ import type { Person } from '../types';
 
 import { PersonLink } from './PersonLink';
 
+type SortField = 'name' | 'sex' | 'born' | 'died';
+
 type Props = {
   people: Person[];
   selectedSlug?: string;
+  currentSort: SortField | null;
+  currentOrder: 'asc' | 'desc';
+  onSort: (field: SortField) => void;
 };
 
 const renderRelative = (relative: Person | undefined, name: string | null) => {
@@ -21,17 +26,96 @@ const renderRelative = (relative: Person | undefined, name: string | null) => {
   return <PersonLink person={relative} />;
 };
 
-export const PeopleTable = ({ people, selectedSlug }: Props) => (
+const getSortIcon = (
+  field: SortField,
+  currentSort: SortField | null,
+  currentOrder: 'asc' | 'desc',
+) => {
+  if (currentSort !== field) {
+    return 'fas fa-sort';
+  }
+
+  return currentOrder === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
+};
+
+type SortHeaderProps = {
+  title: string;
+  field: SortField;
+  currentSort: SortField | null;
+  currentOrder: 'asc' | 'desc';
+  onSort: (field: SortField) => void;
+};
+
+const sortHeaderClassName =
+  'is-flex is-align-items-center is-justify-content-space-between';
+
+const SortHeader = ({
+  title,
+  field,
+  currentSort,
+  currentOrder,
+  onSort,
+}: SortHeaderProps) => (
+  <th>
+    <span className={sortHeaderClassName}>
+      {title}
+
+      <button
+        type="button"
+        className="button is-white is-small"
+        onClick={() => onSort(field)}
+        data-cy={`sort-${field}`}
+        aria-label={`Sort by ${title}`}
+      >
+        <span className="icon">
+          <i className={getSortIcon(field, currentSort, currentOrder)} />
+        </span>
+      </button>
+    </span>
+  </th>
+);
+
+export const PeopleTable = ({
+  people,
+  selectedSlug,
+  currentSort,
+  currentOrder,
+  onSort,
+}: Props) => (
   <table
     data-cy="peopleTable"
     className="table is-striped is-hoverable is-narrow is-fullwidth"
   >
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Sex</th>
-        <th>Born</th>
-        <th>Died</th>
+        <SortHeader
+          title="Name"
+          field="name"
+          currentSort={currentSort}
+          currentOrder={currentOrder}
+          onSort={onSort}
+        />
+        <SortHeader
+          title="Sex"
+          field="sex"
+          currentSort={currentSort}
+          currentOrder={currentOrder}
+          onSort={onSort}
+        />
+        <SortHeader
+          title="Born"
+          field="born"
+          currentSort={currentSort}
+          currentOrder={currentOrder}
+          onSort={onSort}
+        />
+        <SortHeader
+          title="Died"
+          field="died"
+          currentSort={currentSort}
+          currentOrder={currentOrder}
+          onSort={onSort}
+        />
         <th>Mother</th>
         <th>Father</th>
       </tr>

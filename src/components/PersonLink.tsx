@@ -12,6 +12,7 @@ export const PersonLink = ({ person }: Props) => {
 
   return (
     <Link
+      // Preserve filters/sorting when selecting another person in the table.
       to={{
         pathname: `/people/${person.slug}`,
         search: location.search,

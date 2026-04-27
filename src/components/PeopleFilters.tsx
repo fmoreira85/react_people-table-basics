@@ -44,6 +44,7 @@ export const PeopleFilters = ({
       <div className="field">
         <p className="label">Century</p>
 
+        {/* No selected century means "show all centuries". */}
         <label className="checkbox is-block mb-2" htmlFor="century-all">
           <input
             id="century-all"

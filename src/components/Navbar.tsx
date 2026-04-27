@@ -8,6 +8,7 @@ const getNavLinkClassName = ({ isActive }: { isActive: boolean }) =>
 
 export const Navbar = () => {
   const location = useLocation();
+  // Keep People page filters when moving between /people and /people/:slug.
   const peopleSearch = location.pathname.startsWith('/people')
     ? location.search
     : '';

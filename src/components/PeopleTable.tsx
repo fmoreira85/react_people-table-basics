@@ -14,6 +14,7 @@ type Props = {
   onSort: (field: SortField) => void;
 };
 
+// Parent names may be missing or may not match anyone in the loaded dataset.
 const renderRelative = (relative: Person | undefined, name: string | null) => {
   if (!name) {
     return '-';
@@ -26,6 +27,7 @@ const renderRelative = (relative: Person | undefined, name: string | null) => {
   return <PersonLink person={relative} />;
 };
 
+// The icon mirrors the 3-state sort cycle managed in PeoplePage.
 const getSortIcon = (
   field: SortField,
   currentSort: SortField | null,
@@ -57,6 +59,7 @@ const SortHeader = ({
   onSort,
 }: SortHeaderProps) => (
   <th>
+    {/* The button changes sorting without affecting the rest of the row markup. */}
     <span className={sortHeaderClassName}>
       {title}
 

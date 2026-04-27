@@ -11,6 +11,8 @@ type Status = 'loading' | 'loaded' | 'error';
 type SortField = 'name' | 'sex' | 'born' | 'died';
 type SortOrder = 'asc' | 'desc';
 
+// The API gives parent names as strings, so we resolve them to Person objects
+// once after loading to simplify rendering links in the table.
 const preparePeople = (loadedPeople: Person[]) => {
   const peopleWithRelations = loadedPeople.map(person => ({ ...person }));
   const peopleByName = new Map(
@@ -30,6 +32,7 @@ export const PeoplePage = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [status, setStatus] = useState<Status>('loading');
 
+  // Filters and sorting live in the URL so the current view can be shared.
   const query = searchParams.get('query') || '';
   const selectedCenturies = searchParams
     .getAll('centuries')
@@ -52,6 +55,8 @@ export const PeoplePage = () => {
 
   const normalizedQuery = query.toLowerCase();
 
+  // We derive the visible rows from the full dataset instead of storing
+  // filtered/sorted copies in state, so the UI always reflects the URL params.
   const visiblePeople = people
     .filter(person => {
       const matchesQuery =
@@ -86,6 +91,8 @@ export const PeoplePage = () => {
       return currentOrder === 'desc' ? -result : result;
     });
 
+  // Updating a cloned URLSearchParams keeps changes localized and avoids
+  // rewriting unrelated params by hand in each event handler.
   const updateSearchParams = (updater: (params: URLSearchParams) => void) => {
     const newParams = new URLSearchParams(searchParams);
 
@@ -133,6 +140,7 @@ export const PeoplePage = () => {
 
   const handleSort = (field: SortField) => {
     updateSearchParams(params => {
+      // Sorting cycles through: ascending -> descending -> disabled.
       if (currentSort !== field) {
         params.set('sort', field);
         params.delete('order');
@@ -153,6 +161,7 @@ export const PeoplePage = () => {
   };
 
   useEffect(() => {
+    // Ignore late responses if the page unmounts before the request finishes.
     let isMounted = true;
 
     getPeople()
